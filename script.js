@@ -3,9 +3,9 @@
 $(document).ready(function(){
   
   var scene, camera, renderer;
+  //Lebar & panjang canvas layar
   var width = 1920;
   var height = 1080;
-  //var material = new THREE.MeshBasicMaterial( { envmap: texture1, side: THREE.DoubleSide } );
   
 
   function init(){
@@ -18,21 +18,35 @@ $(document).ready(function(){
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000);
     
     renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor( 0xc3b8a3 );
     renderer.setSize( width, height ); //set the size of the model - more is more tasking for the browser
     document.body.appendChild( renderer.domElement ); //create the canvas
 
-    // Cylinder
+    // Cylinder luar
+    // 5 lebar lingkaran atas
+    // 5 lebar lingkaran bawah
+    // 300 panjang tabung
+    // banyak segment atas
+    // banyak segment bawah
+    // mesh lambert = tampilan selimut tabung 
     var cylinderGeometry = new THREE.CylinderGeometry( 5, 5, 300, 32,32,false );
     var cylinderMesh = new THREE.Mesh( cylinderGeometry, new THREE.MeshLambertMaterial() );
-    //scene.add( cylinder );
-    //cylinder.position.set(0,0,100);
+    // variabel yang nanti akan digunakan untuk menggabungkan 2 tabung
     var cylinder_bsp = new ThreeBSP (cylinderMesh);
-    
-    cylinderGeometry = new THREE.CylinderGeometry( 3.5, 3.5, 300, 32,1,false );
+    // Cylinder dalam
+    // 3.5 lebar lingkaran atas
+    // 3.5 lebar lingkaran bawah
+    // 300 panjang tabung
+    // banyak segment atas
+    // banyak segment bawah
+    // mesh lambert = tampilan selimut tabung 
+    cylinderGeometry = new THREE.CylinderGeometry( 4, 4, 300, 32,32,false );
     cylinderMesh = new THREE.Mesh( cylinderGeometry, new THREE.MeshLambertMaterial() );
+    // variabel yang nanti akan digunakan untuk menggabungkan 2 tabung
     var cylinder_bsp_sub = new ThreeBSP (cylinderMesh);
-    
+    // menggabungkan tabung luar dengan tabung dalam
 		var subtract_bsp = cylinder_bsp.subtract( cylinder_bsp_sub );
+    // menambahkan shading dan texture tabung
 		var result = subtract_bsp.toMesh( new THREE.MeshLambertMaterial({ shading: THREE.SmoothShading, map: THREE.ImageUtils.loadTexture('assets/silver-metal-texture.jpg') }) );
 		
 		result.geometry.computeVertexNormals();
@@ -40,7 +54,9 @@ $(document).ready(function(){
 		scene.add( result );
     
     // set camera and controls
-    camera.position.set(0,300,75); //move camera a bit
+    // set posisi camera x,y,z
+    camera.position.set(0,250,150); //move camera a bit
+    // menambahkan orbit kontrol pada kamera
     controls = new THREE.OrbitControls( camera, renderer.domElement );
     
     
